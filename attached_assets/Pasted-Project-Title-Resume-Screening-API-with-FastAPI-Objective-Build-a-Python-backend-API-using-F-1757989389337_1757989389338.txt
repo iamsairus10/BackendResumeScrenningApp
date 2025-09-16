@@ -1,0 +1,87 @@
+Project Title: Resume Screening API with FastAPI
+
+Objective:
+
+Build a Python backend API using FastAPI to screen resumes against a job description. The API should calculate a percentage match score based on key criteria like skills, experience, and education, and provide a detailed breakdown.
+
+Requirements:
+
+Project Setup:
+
+Create a FastAPI application.
+
+Set up a project structure that is modular, with separate files for different functionalities (e.g., main.py, resume_parser.py, matching_engine.py, models.py).
+
+Include a requirements.txt file listing all necessary libraries.
+
+Endpoints:
+
+Create a POST endpoint, /screen_resume, that accepts two files: a resume (resume_file) and a job description (jd_file). Both files can be either PDF or plain text. The endpoint should also accept a jd_text field for job descriptions provided as free text.
+
+File Handling and Parsing (resume_parser.py):
+
+Implement a function parse_resume(file: UploadFile) that can handle both .pdf and .docx files.
+
+Use PyMuPDF for PDF parsing.
+
+Use python-docx for DOCX parsing.
+
+Extract key information from the resume:
+
+Skills (list of strings)
+
+Experience (total years, extracted from a dedicated experience section)
+
+Education (extracted from a dedicated education section)
+
+Implement a function parse_job_description(file: UploadFile, text: str) that handles file uploads or free text.
+
+Extract required skills (list of strings) and years of experience from the JD.
+
+NLP Preprocessing:
+
+Within the parsing functions, perform text cleaning:
+
+Convert text to lowercase.
+
+Remove punctuation.
+
+Remove common English stopwords.
+
+Use a pre-trained spaCy model (en_core_web_sm or a similar one) to perform Named Entity Recognition (NER) to extract specific entities like skills, technologies, and educational institutions.
+
+Matching Engine (matching_engine.py):
+
+Create a class MatchingEngine that encapsulates the matching logic.
+
+Implement a method calculate_match_score(resume_data, jd_data).
+
+Matching Strategies:
+
+Skills: Calculate a Jaccard similarity score between the extracted skills from the resume and the JD.
+
+Experience: Compare the years of experience from the resume against the required years in the JD. Implement a simple scoring logic (e.g., 100% if equal or greater, proportionally less if lower).
+
+Education: Check for keywords from the JD's education requirements within the resume's education section. This can be a simple keyword match or a semantic similarity check.
+
+Semantic Similarity: Use a Sentence-BERT model from the sentence-transformers library to calculate the cosine similarity between the full resume text and the full JD text. This will provide a holistic "fit" score. The model all-MiniLM-L6-v2 is a good choice for its performance and small size.
+
+Scoring Aggregation:
+
+Return a dictionary containing an overall score (weighted average) and a breakdown of scores for each section (e.g., skills_score, experience_score, education_score, semantic_score).
+
+Define reasonable weights for the scores (e.g., Skills: 40%, Experience: 30%, Education: 20%, Semantic: 10%).
+
+Pydantic Models (models.py):
+
+Define a Pydantic model for the request body of the /screen_resume endpoint. This model should include fields for resume_file, jd_file, and jd_text.
+
+Define a Pydantic model for the JSON response, including the overall_match_percentage and the breakdown dictionary.
+
+Error Handling and Best Practices:
+
+Implement proper error handling for file uploads (e.g., invalid file type, file not found).
+
+Use dependency injection for the matching engine to keep the code clean and testable.
+
+Add comments and type hints to all functions and methods.
