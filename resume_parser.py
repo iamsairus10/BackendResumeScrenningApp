@@ -43,7 +43,7 @@ class ResumeParser:
             content = file.file.read()
             
             # Determine file type using magic if available, otherwise use extension
-            if HAS_MAGIC:
+            if HAS_MAGIC and magic:
                 file_type = magic.from_buffer(content, mime=True)
                 is_pdf = 'pdf' in file_type
                 is_word = 'word' in file_type or 'document' in file_type
@@ -99,7 +99,7 @@ class ResumeParser:
                 content = file.file.read()
                 
                 # Use same file type detection as resume parsing
-                if HAS_MAGIC:
+                if HAS_MAGIC and magic:
                     file_type = magic.from_buffer(content, mime=True)
                     is_pdf = 'pdf' in file_type
                     is_word = 'word' in file_type or 'document' in file_type
@@ -201,7 +201,8 @@ class ResumeParser:
             skills.update([match.lower().strip() for match in matches])
         
         # Extract using spaCy NER for organizations and technologies
-        for ent in doc.ents:
+        if self.nlp:
+            for ent in doc.ents:
             if ent.label_ in ['ORG', 'PRODUCT', 'GPE'] and len(ent.text) > 2:
                 # Filter for technology-related entities
                 tech_keywords = ['software', 'framework', 'library', 'database', 'cloud', 'api']
@@ -280,8 +281,9 @@ class ResumeParser:
                 education.extend([match.strip() for match in matches])
         
         # Use spaCy to extract educational institutions
-        doc = self.nlp(text)
-        for ent in doc.ents:
+        if self.nlp:
+            doc = self.nlp(text)
+            for ent in doc.ents:
             if ent.label_ in ['ORG'] and any(keyword in ent.text.lower() for keyword in ['university', 'college', 'institute', 'school']):
                 education.append(ent.text.strip())
         
