@@ -202,13 +202,14 @@ class ResumeParser:
         
         # Extract using spaCy NER for organizations and technologies
         if self.nlp:
+            doc = self.nlp(text)
             for ent in doc.ents:
-            if ent.label_ in ['ORG', 'PRODUCT', 'GPE'] and len(ent.text) > 2:
-                # Filter for technology-related entities
-                tech_keywords = ['software', 'framework', 'library', 'database', 'cloud', 'api']
-                context = text[max(0, ent.start_char-50):ent.end_char+50].lower()
-                if any(keyword in context for keyword in tech_keywords):
-                    skills.add(ent.text.lower().strip())
+                if ent.label_ in ['ORG', 'PRODUCT', 'GPE'] and len(ent.text) > 2:
+                    # Filter for technology-related entities
+                    tech_keywords = ['software', 'framework', 'library', 'database', 'cloud', 'api']
+                    context = text[max(0, ent.start_char-50):ent.end_char+50].lower()
+                    if any(keyword in context for keyword in tech_keywords):
+                        skills.add(ent.text.lower().strip())
         
         # Extract skills from skills section
         skills_section_match = re.search(r'(?:skills?|technical skills?|core competencies):?\s*([^\n]*(?:\n[^\n]*)*?)(?:\n\s*\n|\n[A-Z]|\Z)', text, re.IGNORECASE)
@@ -284,8 +285,8 @@ class ResumeParser:
         if self.nlp:
             doc = self.nlp(text)
             for ent in doc.ents:
-            if ent.label_ in ['ORG'] and any(keyword in ent.text.lower() for keyword in ['university', 'college', 'institute', 'school']):
-                education.append(ent.text.strip())
+                if ent.label_ in ['ORG'] and any(keyword in ent.text.lower() for keyword in ['university', 'college', 'institute', 'school']):
+                    education.append(ent.text.strip())
         
         return list(set(education))
 
