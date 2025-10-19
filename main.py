@@ -55,8 +55,8 @@ async def health_check():
 @app.post("/screen_resume", response_model=ScreeningResponse)
 async def screen_resume(
     resume_file: UploadFile = File(..., description="Resume file (PDF, DOCX, or TXT)"),
-    jd_file: Optional[UploadFile] = File(None, description="Job description file (PDF, DOCX, or TXT)"),
-    jd_text: Optional[str] = Form(None, description="Job description as text"),
+    jd_file: UploadFile = File(..., description="Job description file (PDF, DOCX, or TXT)"),
+    # jd_text: Optional[str] = Form(None, description="Job description as text"),
     parser: ResumeParser = Depends(get_resume_parser),
     engine: MatchingEngine = Depends(get_matching_engine)
 ):
@@ -73,17 +73,18 @@ async def screen_resume(
     """
     try:
         # Validate inputs
-        if not jd_file and not jd_text:
+        if not jd_file:
+        # and not jd_text:
             raise HTTPException(
                 status_code=400, 
-                detail="Either jd_file or jd_text must be provided"
+                detail="jd_file must be provided"
             )
         
         # Parse resume
         resume_data = parser.parse_resume(resume_file)
         
         # Parse job description
-        jd_data = parser.parse_job_description(file=jd_file, text=jd_text)
+        jd_data = parser.parse_job_description(file=jd_file)
         
         # Calculate match scores
         match_result = engine.calculate_match_score(resume_data, jd_data)

@@ -90,13 +90,14 @@ class ResumeParser:
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error parsing resume: {str(e)}")
 
-    def parse_job_description(self, file: Optional[UploadFile] = None, text: Optional[str] = None) -> JobDescriptionData:
+    def parse_job_description(self, file: UploadFile) -> JobDescriptionData:
         """Parse job description from file or text"""
         try:
-            if text:
-                jd_text = text
-            elif file:
+            if file:
+                # jd_text = text
                 content = file.file.read()
+            # elif file:
+            #     content = file.file.read()
                 
                 # Use same file type detection as resume parsing
                 if HAS_MAGIC and magic:
