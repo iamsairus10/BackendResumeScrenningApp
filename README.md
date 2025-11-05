@@ -1,53 +1,148 @@
-# Resume Screening API Documentation
+# Resume Screening API
 
-A FastAPI-based system that analyzes resumes against job descriptions using AI and provides detailed match scores.
+A FastAPI-based application that leverages AI and NLP to analyze resumes against job descriptions, providing detailed match scores and insights for recruitment processes.
 
-## 🚀 Getting Started
+## Features
 
-### Starting the Server
+- 📄 Multi-format support (PDF, DOCX, TXT)
+- 🔍 Advanced NLP-based analysis
+- 🔐 Google OAuth authentication
+- 📊 Detailed match scoring
+- 🚀 High-performance API
+- 📱 CORS support for frontend integration
 
-#### Option 1: Using Replit (Recommended)
-The server should already be running automatically in Replit. You can see it in the "Webview" tab.
+## Prerequisites
 
-#### Option 2: Manual Start
-If you need to start the server manually:
+- Python 3.8 or higher
+- pip (Python package manager)
+- Virtual environment (recommended)
 
+## Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/iamsairus10/BackendResumeScrenningApp.git
+cd BackendResumeScrenningApp
+```
+
+2. Create and activate a virtual environment:
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows, use: .venv\Scripts\activate
+```
+
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+4. Install spaCy language model:
+```bash
+python -m spacy download en_core_web_sm
+```
+
+## Configuration
+
+1. Create a `.env` file in the project root:
+```bash
+cp .env.example .env
+```
+
+2. Set up Google OAuth credentials:
+   - Go to [Google Cloud Console](https://console.cloud.google.com)
+   - Create a new project or select an existing one
+   - Enable the Google OAuth2 API
+   - Create OAuth 2.0 credentials (OAuth client ID)
+   - Set the authorized redirect URI to `http://localhost:5000/callback`
+   - Add your credentials to the `.env` file:
+     ```
+     GOOGLE_CLIENT_ID=your_client_id_here
+     GOOGLE_CLIENT_SECRET=your_client_secret_here
+     SECRET_KEY=your_secure_secret_key_here
+     ```
+
+## Running the Server
+
+1. Start the server:
 ```bash
 python main.py
 ```
-
-The server will start on `http://0.0.0.0:5000`
-
-#### Option 3: Using uvicorn directly
+Or using uvicorn directly:
 ```bash
 uvicorn main:app --host 0.0.0.0 --port 5000 --reload
 ```
 
-### Verifying the Server is Running
+2. Access the application:
+   - API documentation: `http://localhost:5000/docs`
+   - Alternative API docs: `http://localhost:5000/redoc`
+   - Health check: `http://localhost:5000/health`
 
-1. Check the "Console" tab in Replit for startup messages
-2. Visit the API documentation at: `https://your-repl-url.replit.dev/docs`
-3. Test the health endpoint: `https://your-repl-url.replit.dev/health`
+## API Endpoints
 
-## 📋 API Endpoints
+### Authentication Endpoints
+- `GET /auth/google` - Initiate Google OAuth login
+- `GET /callback` - OAuth callback handler
+- `GET /user` - Get current user information
+- `GET /signout` - Sign out the current user
 
-### GET /
-Returns basic API information and available endpoints.
+### Core Endpoints
+- `GET /` - API information and available endpoints
+- `GET /health` - Health check endpoint
+- `POST /screen_resume` - Resume screening endpoint
+  - Parameters:
+    - `resume_file` (required): Resume file (PDF, DOCX, or TXT)
+    - `jd_file` (required): Job description file (PDF, DOCX, or TXT)
 
-### GET /health
-Health check endpoint to verify the API is running.
+## API Response Format
 
-### POST /screen_resume
-Main endpoint for screening resumes against job descriptions.
+### Successful Response
+```json
+{
+    "overall_match_percentage": 75.5,
+    "breakdown": {
+        "skills_match": 80.0,
+        "experience_match": 70.0,
+        "education_match": 85.0,
+        "semantic_similarity": 67.0
+    },
+    "message": "Good match! This candidate has several relevant qualifications."
+}
+```
 
-**Parameters:**
-- `resume_file` (required): Resume file (PDF, DOCX, or TXT)
-- `jd_file` (optional): Job description file (PDF, DOCX, or TXT) 
-- `jd_text` (optional): Job description as plain text
+## Security
 
-**Note:** Either `jd_file` or `jd_text` must be provided.
+- Google OAuth 2.0 authentication
+- Domain-restricted access (configurable)
+- Secure session management
+- HTTP-only cookies
+- JWT token-based API protection
 
-**Response:**
+## Technical Stack
+
+- **Framework**: FastAPI
+- **Authentication**: Google OAuth 2.0, JWT
+- **Document Processing**: PyMuPDF, python-docx
+- **NLP**: spaCy, scikit-learn
+- **File Handling**: python-magic, python-multipart
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- FastAPI framework
+- spaCy NLP library
+- Google OAuth 2.0
+- All other open-source contributors
 ```json
 {
   "overall_match_percentage": 75.5,
