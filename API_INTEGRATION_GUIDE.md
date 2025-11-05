@@ -1,17 +1,31 @@
-# Quick Integration Guide for Resume Screening API
+# Resume Screening API Integration Guide
 
-## 🌐 Your API Base URL
-Replace `your-repl-url` with your actual Replit URL:
+## API Base URL
+
+For local development:
 ```
-https://your-repl-name--your-username.replit.dev
+http://localhost:5000
 ```
 
-## ⚡ Quick Test
-
-### 1. Test if your API is running
-Open this URL in your browser:
+For production, replace with your deployed API URL:
 ```
-https://your-repl-name--your-username.replit.dev/health
+https://your-api-domain.com
+```
+
+## Quick Start
+
+### 1. Verify API Status
+Test the health endpoint:
+```bash
+curl http://localhost:5000/health
+```
+
+Expected response:
+```json
+{
+    "status": "healthy",
+    "service": "Resume Screening API"
+}
 ```
 
 You should see:
@@ -19,12 +33,32 @@ You should see:
 {"status": "healthy", "service": "Resume Screening API"}
 ```
 
-### 2. View Interactive Documentation
-```
-https://your-repl-name--your-username.replit.dev/docs
+### 2. Authentication Flow
+
+1. Redirect users to the login endpoint:
+```javascript
+window.location.href = 'http://localhost:5000/auth/google';
 ```
 
-## 🔥 Frontend Integration Examples
+2. After successful authentication, users will be redirected to your frontend application with an HTTP-only cookie for session management.
+
+3. Access protected endpoints with the session cookie:
+```javascript
+// The cookie is automatically included in requests
+fetch('http://localhost:5000/screen_resume', {
+    method: 'POST',
+    credentials: 'include',  // Important for cookies
+    body: formData
+});
+```
+
+### 3. Interactive API Documentation
+Access the Swagger UI documentation:
+```
+http://localhost:5000/docs
+```
+
+## Frontend Integration Examples
 
 ### Simple HTML Form
 ```html
